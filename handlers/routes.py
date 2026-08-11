@@ -9,7 +9,7 @@ router = Router()
 def get_main_reply_keyboard():
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="О боте")],
+            [KeyboardButton(text="/about")],
             [KeyboardButton(text="Старт"), KeyboardButton(text="/menu")]
         ],
         resize_keyboard=True
