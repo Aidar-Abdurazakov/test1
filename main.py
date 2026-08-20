@@ -1,28 +1,34 @@
-from os import getenv
+import logging
+from config import bot, dp, Admin
 import asyncio
+from handlers import commands, echo, fsm
+from db import main_db
+from aiogram.types import BotCommand
 
-from aiogram import Bot, Dispatcher
-from dotenv import load_dotenv
-
-from handlers.routes import router
-
-
-load_dotenv()
-
-TOKEN = getenv("BOT_TOKEN")
-
-dp = Dispatcher()
-
-dp.include_router(router)
-
-
-async def main():
-    bot = Bot(token=TOKEN)
-
-    print("Start...")
-
-    await dp.start_polling(bot)
+async def set_commands():
+    commands = [
+        BotCommand(command='start', description='Старт бота'),
+        BotCommand(command='help', description='Помощь'),
+        BotCommand(command='about', description='о нас'),
+        BotCommand(command='allproducts', description='Получить товары из БД'),
+        BotCommand(command='add_product', description='Записать товар'),
+    ]
+    await bot.set_my_commands(commands)
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+async def on_startup():
+    await main_db.init_db()
+    await set_commands()
+    for admin_id in Admin:
+        await bot.send_message(chat_id=admin_id, text='Бот включен!')
+
+dp.include_router(commands.router_commands)
+dp.include_router(fsm.router_fsm)
+
+
+dp.startup.register(on_startup)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    asyncio.run(dp.start_polling(bot))
