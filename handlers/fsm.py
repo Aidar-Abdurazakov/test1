@@ -54,16 +54,34 @@ async def add_category(message:Message, state:FSMContext):
 
 @router_fsm.message(AddProduct.photo, F.photo)
 async def add_photo(message: Message, state: FSMContext):
+
     await state.update_data(photo=message.photo[-1].file_id)
+
     data = await state.get_data()
 
-    await message.answer_photo(photo=data['photo'], caption=(f"Товар добавлен!\n"
-        f"Название товара - {data['name']}\n"
-        f"Цена: {data['price']}\n"
-        f"Описание: {data['description']}\n"
-        f"Артикул: {data['product_id']}\n"
-        f"Категория: {data['category']}")
+    await message.answer_photo(
+        photo=data['photo'],
+        caption=(
+            f"Товар добавлен!\n"
+            f"Название товара - {data['name']}\n"
+            f"Цена: {data['price']}\n"
+            f"Описание: {data['description']}\n"
+            f"Артикул: {data['product_id']}\n"
+            f"Категория: {data['category']}"
+        )
     )
 
-    await main_db.add_product_detail_db(product_id=data['product_id'], category=data['category'], description=data['description'])
-    await state.clear()             
+    await main_db.add_product_db(
+        name_product=data['name'],
+        price=data['price'],
+        product_id=data['product_id'],
+        photo_id=data['photo']
+    )
+
+    await main_db.add_product_detail_db(
+        product_id=data['product_id'],
+        category=data['category'],
+        description=data['description']
+    )
+
+    await state.clear()

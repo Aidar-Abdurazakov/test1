@@ -20,6 +20,10 @@ async def help_command(message:Message,bot):
 async def hello_command(message: Message):
     await message.answer('Hello! Do you have a question?')
 
+@router_commands.message(Command('about'))
+async def about_command(message:Message,bot):
+    await message.answer('Привет! Меня зовут Айдар, и я помогу хранить название твоих товаров в БД.')
+
 @router_commands.message(Command('allproducts'))
 async def products_command(message:Message):
     products = await main_db.get_product_db()
