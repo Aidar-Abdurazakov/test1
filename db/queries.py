@@ -1,5 +1,5 @@
 create_products_table = """
-    CREATE TABLE IF NOT EXISTS products(
+    CREATE TABLE IF NOT EXISTS product(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name_product TEXT NOTT NULL,
         price INTEGER,
@@ -39,4 +39,13 @@ insert_product_detail = """
     INSERT INTO products_detail
     (description, product_id, category)
     VALUES (?, ?, ?)
+"""
+
+delete_product = """
+DELETE FROM products
+WHERE product_id = ?
+"""
+delete_product_detail = """
+DELETE FROM products_detail
+WHERE product_id = ?
 """

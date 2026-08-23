@@ -51,3 +51,19 @@ async def get_product_db():
         products = await cursor.fetchall()
 
     return products
+
+async def delete_product_db(product_id):
+
+    async with aiosqlite.connect(path_db) as conn:
+
+        await conn.execute(
+            queries.delete_product,
+            (product_id,)
+        )
+
+        await conn.execute(
+            queries.delete_product_detail,
+            (product_id,)
+        )
+
+        await conn.commit()

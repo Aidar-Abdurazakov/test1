@@ -29,3 +29,34 @@ menu_inline = InlineKeyboardMarkup(
         [InlineKeyboardButton(text='Помощь', callback_data='help')]
     ]
 )
+
+def product_action(product_id):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text='✏️ Редактировать',
+                    callback_data=f'edit:{product_id}'
+                ),
+                InlineKeyboardButton(
+                    text='🗑 Удалить',
+                    callback_data=f'delete:{product_id}'
+                )
+            ]
+        ]
+    )
+
+delete_confirm = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text='✅ Да, удалить',
+                callback_data='confirm_delete'
+            ),
+            InlineKeyboardButton(
+                text='❌ Отмена',
+                callback_data='cancel_delete'
+            )
+        ]
+    ]
+)

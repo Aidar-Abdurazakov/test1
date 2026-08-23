@@ -4,6 +4,7 @@ import asyncio
 from handlers import commands, echo, fsm
 from db import main_db
 from aiogram.types import BotCommand
+from handlers import commands, fsm, fsm_delete
 
 async def set_commands():
     commands = [
@@ -32,3 +33,7 @@ dp.startup.register(on_startup)
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     asyncio.run(dp.start_polling(bot))
+
+dp.include_router(commands.router_commands)
+dp.include_router(fsm.router_fsm)
+dp.include_router(fsm_delete.router_delete)    

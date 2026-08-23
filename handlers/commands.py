@@ -4,6 +4,7 @@ from aiogram.types import Message, FSInputFile, CallbackQuery
 from config import bot
 from handlers.buttons import main_buttons, main_builder, menu_inline
 from db import main_db
+from handlers.buttons import product_action
 
 router_commands = Router()
 
