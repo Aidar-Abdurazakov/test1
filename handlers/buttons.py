@@ -1,62 +1,30 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
-
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 main_buttons = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text='/start'), KeyboardButton(text='/help'),
-        KeyboardButton(text='/about'), KeyboardButton(text='/allproducts')
-         ],
+        [KeyboardButton(text="/add_book"), KeyboardButton(text="/books")],
+        [KeyboardButton(text="/delete_book")]
     ],
-    resize_keyboard=True
-)
-
-
-main_buttons_builder = ReplyKeyboardBuilder()
-main_buttons_builder.button(text='/start')
-main_buttons_builder.button(text='/help')
-main_buttons_builder.button(text='/about')
-main_buttons_builder.button(text='/allproducts')
-main_buttons_builder.adjust(2)
-
-main_builder = main_buttons_builder.as_markup(
     resize_keyboard=True
 )
 
 menu_inline = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text='О нас', callback_data='about')],
-        [InlineKeyboardButton(text='Помощь', callback_data='help')]
+        [InlineKeyboardButton(text="Добавить книгу", callback_data="add_book_action")],
+        [InlineKeyboardButton(text="Каталог", callback_data="view_catalog")]
     ]
 )
 
-def product_action(product_id):
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text='✏️ Редактировать',
-                    callback_data=f'edit:{product_id}'
-                ),
-                InlineKeyboardButton(
-                    text='🗑 Удалить',
-                    callback_data=f'delete:{product_id}'
-                )
-            ]
-        ]
-    )
 
-delete_confirm = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text='✅ Да, удалить',
-                callback_data='confirm_delete'
-            ),
-            InlineKeyboardButton(
-                text='❌ Отмена',
-                callback_data='cancel_delete'
-            )
-        ]
-    ]
-)
+def main_builder():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Список книг", callback_data="list_books")
+    builder.adjust(1)
+    return builder.as_markup()
+
+
+def product_action(book_id):
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Удалить", callback_data=f"delete_{book_id}")
+    return builder.as_markup()

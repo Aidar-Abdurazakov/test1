@@ -1,87 +1,68 @@
-from aiogram import Router, F
-from aiogram.types import Message
+from aiogram import Router
 from aiogram.filters import Command
+from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+
 from db import main_db
 
-router_fsm =Router()
-class AddProduct(StatesGroup):
-    name = State()
-    price = State()
-    description = State()
-    product_id = State()
-    category = State()
-    photo = State()
+router = Router()
 
-@router_fsm.message(Command('add_product'))
-async def add_product_fsm(message:Message, state: FSMContext):
-    await message.answer('Введите название товара:')
-    await state.set_state(AddProduct.name)
 
-@router_fsm.message(AddProduct.name)
-async def add_name(message: Message, state: FSMContext):
-    await state.update_data(name=message.text)
-    await message.answer('Введите цену товара')
-    await state.set_state(AddProduct.price)
+class AddBookState(StatesGroup):
+    number = State()
+    title = State()
+    author = State()
+    genre = State()
 
-@router_fsm.message(AddProduct.price)
-async def add_price(message:Message, state: FSMContext):
+
+@router.message(Command("add_book"))
+async def cmd_add_book(message: Message, state: FSMContext):
+    await state.set_state(AddBookState.number)
+    await message.answer("Шаг 1 из 4: Введите номер книги (только число):")
+
+
+@router.message(AddBookState.number)
+async def process_number(message: Message, state: FSMContext):
     if not message.text.isdigit():
-        await message.answer('Цена должна быть числом!')
-    else:
-        await state.update_data(price=message.text)
-        await message.answer('Введите описание для данного товара:')
-        await state.set_state(AddProduct.description)
+        await message.answer("Ошибка! Номер книги должен быть числом. Попробуйте еще раз:")
+        return
 
-@router_fsm.message(AddProduct.description)
-async def add_description(message:Message, state: FSMContext):
-    await state.update_data(description=message.text)
-    await message.answer('Введите артикул товара, он должен быть уникальным!')
-    await state.set_state(AddProduct.product_id)     
+    await state.update_data(number=int(message.text))
+    await state.set_state(AddBookState.title)
+    await message.answer("Шаг 2 из 4: Введите название книги:")
 
-@router_fsm.message(AddProduct.product_id)
-async def add_product_id(message:Message, state:FSMContext):
-    await state.update_data(product_id=message.text)
-    await message.answer('Введите категорию товара')
-    await state.set_state(AddProduct.category)
 
-@router_fsm.message(AddProduct.category)
-async def add_category(message:Message, state:FSMContext):
-    await state.update_data(category=message.text)
-    await message.answer('Отправьте фото товара')
-    await state.set_state(AddProduct.photo)
+@router.message(AddBookState.title)
+async def process_title(message: Message, state: FSMContext):
+    await state.update_data(title=message.text)
+    await state.set_state(AddBookState.author)
+    await message.answer("Шаг 3 из 4: Введите автора книги:")
 
-@router_fsm.message(AddProduct.photo, F.photo)
-async def add_photo(message: Message, state: FSMContext):
 
-    await state.update_data(photo=message.photo[-1].file_id)
+@router.message(AddBookState.author)
+async def process_author(message: Message, state: FSMContext):
+    await state.update_data(author=message.text)
+    await state.set_state(AddBookState.genre)
+    await message.answer("Шаг 4 из 4: Введите жанр книги:")
 
-    data = await state.get_data()
 
-    await message.answer_photo(
-        photo=data['photo'],
-        caption=(
-            f"Товар добавлен!\n"
-            f"Название товара - {data['name']}\n"
-            f"Цена: {data['price']}\n"
-            f"Описание: {data['description']}\n"
-            f"Артикул: {data['product_id']}\n"
-            f"Категория: {data['category']}"
-        )
+@router.message(AddBookState.genre)
+async def process_genre(message: Message, state: FSMContext):
+    user_data = await state.get_data()
+    book_id = user_data["number"]
+    title = user_data["title"]
+    author = user_data["author"]
+    genre = message.text
+
+    await main_db.add_book_db(title, author, book_id)
+    await main_db.add_book_detail_db(book_id, genre)
+
+    await message.answer(
+        f"✅ Книга успешно добавлена!\n\n"
+        f"📌 Номер: {book_id}\n"
+        f"📖 Название: {title}\n"
+        f"✍️ Автор: {author}\n"
+        f"🏷 Жанр: {genre}"
     )
-
-    await main_db.add_product_db(
-        name_product=data['name'],
-        price=data['price'],
-        product_id=data['product_id'],
-        photo_id=data['photo']
-    )
-
-    await main_db.add_product_detail_db(
-        product_id=data['product_id'],
-        category=data['category'],
-        description=data['description']
-    )
-
     await state.clear()

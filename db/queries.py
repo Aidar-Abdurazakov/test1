@@ -1,51 +1,53 @@
-create_products_table = """
-    CREATE TABLE IF NOT EXISTS product(
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        name_product TEXT NOTT NULL,
-        price INTEGER,
-        product_id INTEGER NOT NULL,
-        photo_id TEXT
-)
-"""
-insert_product = """
-    INSERT INTO products
-        (name_product, price, product_id, photo_id)
-        VALUES(?, ?, ?, ?)
-"""
-
-select_product = """
-    SELECT
-        pr.name_product,
-        pr.price,
-        pr2.category,
-        pr2.description,
-        pr.product_id,
-        pr.photo_id
-    FROM products pr
-    INNER JOIN products_detail pr2
-    ON pr.product_id = pr2.product_id;    
-"""
-
-create_table_products_detail = """
-    CREATE TABLE IF NOT EXISTS products_detail(
+create_books_table = """
+    CREATE TABLE IF NOT EXISTS books (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        description TEXT,
-        product_id INTEGER NOT NULL,
-        category TEXT
+        name_books TEXT NOT NULL,
+        author TEXT NOT NULL,
+        book_id INTEGER NOT NULL
     )
 """
 
-insert_product_detail = """
-    INSERT INTO products_detail
-    (description, product_id, category)
+create_table_books_detail = """
+    CREATE TABLE IF NOT EXISTS books_detail (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        book_id INTEGER NOT NULL,
+        genre TEXT NOT NULL
+    )
+"""
+
+insert_book = """
+    INSERT INTO books
+        (name_books, author, book_id)
     VALUES (?, ?, ?)
 """
 
-delete_product = """
-DELETE FROM products
-WHERE product_id = ?
+
+insert_book_detail = """
+    INSERT INTO books_detail
+        (book_id, genre)
+    VALUES (?, ?)
 """
-delete_product_detail = """
-DELETE FROM products_detail
-WHERE product_id = ?
+
+
+select_books = """
+    SELECT
+        books.book_id,
+        books.name_books,
+        books.author,
+        books_detail.genre
+    FROM books
+    INNER JOIN books_detail
+        ON books.book_id = books_detail.book_id
+"""
+
+
+delete_book = """
+    DELETE FROM books
+    WHERE book_id = ?
+"""
+
+
+delete_book_detail = """
+    DELETE FROM books_detail
+    WHERE book_id = ?
 """
