@@ -16,7 +16,6 @@ menu_inline = InlineKeyboardMarkup(
     ]
 )
 
-
 def main_builder():
     builder = InlineKeyboardBuilder()
     builder.button(text="Список книг", callback_data="list_books")

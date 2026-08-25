@@ -20,7 +20,6 @@ async def add_book_db(name_books, author, book_id):
         )
         await conn.commit()
 
-
 async def add_book_detail_db(book_id, genre):
     async with aiosqlite.connect(path_db) as conn:
         await conn.execute(

@@ -15,7 +15,6 @@ async def set_commands():
     ]
     await bot.set_my_commands(commands_list)
 
-
 async def on_startup():
     await main_db.init_db()
     await set_commands()

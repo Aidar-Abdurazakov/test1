@@ -28,7 +28,6 @@ insert_book_detail = """
     VALUES (?, ?)
 """
 
-
 select_books = """
     SELECT
         books.book_id,

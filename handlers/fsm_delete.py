@@ -12,7 +12,6 @@ router = Router()
 class DeleteBookState(StatesGroup):
     book_id = State()
 
-
 @router.message(Command("delete_book"))
 async def cmd_delete_book(message: Message, state: FSMContext):
     await state.set_state(DeleteBookState.book_id)
