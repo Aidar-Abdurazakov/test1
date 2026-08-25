@@ -1,7 +1,6 @@
 import asyncio
 import logging
 from aiogram.types import BotCommand
-
 from config import bot, dp, Admin
 from db import main_db
 from handlers import commands, fsm, fsm_delete
@@ -31,7 +30,6 @@ async def on_startup():
             logging.error(f"Не удалось отправить сообщение админу {admin_id}: {e}")
 
 
-# Подключаем переменные router из каждого модуля
 dp.include_router(commands.router)
 dp.include_router(fsm.router)
 dp.include_router(fsm_delete.router)
